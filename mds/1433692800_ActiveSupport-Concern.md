@@ -1,3 +1,5 @@
+# ActiveSupport::Concern
+
 ## 背景
 
 一般来说，要定义一个模块，在 Ruby 中为了更好的组织类方法和实例方法，参照以下这种写法
@@ -11,10 +13,12 @@ module M
       # 调用base类的方法，一般用来声明式地修改类  
       my_attr_reader :name, :age  
     end  
-  end  
+  end
+
   module ClassMethods  
     def class_method_1; end  
-  end  
+  end
+
   module InstanceMethods  
     def instance_method_1; end  
   end  
@@ -31,7 +35,8 @@ module M2
       my_attr_reader :age  
     end  
   end  
-end  
+end
+
 module M1  
   def self.included(base)  
     base.class_eval do  
@@ -39,29 +44,33 @@ module M1
     end  
   end  
   include M2  
-end  
+end
+
 class C  
   def self.my_attr_reader(*args); end  
   include M1  
 end  
 ```
-**ActiveSupport::Concern**就是用来解决这类问题的，以上写法可以改成
+**ActiveSupport::Concern** 就是用来解决这类问题的，以上写法可以改成
 
 ```ruby
-require 'active_support'  
+require 'active_support'
+
 module M2  
   extend ActiveSupport::Concern  
   included do  
     my_attr_reader :age  
   end  
-end  
+end
+
 module M1  
   extend ActiveSupport::Concern  
   include M2  
   included do  
     my_attr_reader :name  
   end  
-end  
+end
+
 class C  
   def self.my_attr_reader(*args); end  
   include M1  
@@ -74,10 +83,12 @@ module Jed
   def self.shout!
     puts "Look out!"
   end
+
   def hehe!
     puts "I say!"
   end
 end
+
 class Huo
   include Jed
 end
@@ -88,9 +99,11 @@ module Jed
   def self.included(base)
     base.extend(ClassMethods)
   end
+
   def self.shout!
     puts "Look out!"
   end
+
   def hehe!
     puts "I say!"
   end
@@ -106,9 +119,11 @@ module ActiveSupport
         super "Cannot define multiple 'included' blocks for a Concern"
       end
     end
+  
     def self.extended(base) #:nodoc:
       base.instance_variable_set(:@_dependencies, [])
     end
+  
     def append_features(base)
       if base.instance_variable_defined?(:@_dependencies)
         base.instance_variable_get(:@_dependencies) << self
@@ -121,6 +136,7 @@ module ActiveSupport
         base.class_eval(&@_included_block) if instance_variable_defined?(:@_included_block)
       end
     end
+
     def included(base = nil, &block)
       if base.nil?
         raise MultipleIncludedBlocks if instance_variable_defined?(:@_included_block)
@@ -129,6 +145,7 @@ module ActiveSupport
         super
       end
     end
+
     def class_methods(&class_methods_module_definition)
       mod = const_defined?(:ClassMethods) ?
         const_get(:ClassMethods) :
@@ -140,7 +157,7 @@ end
 ```
 #### **self.extended**
 
-它是一个回调方法，会在**ActiveSupport::Concern**被 extend进其他 module 或 class 时触发。参数 base 就是被 extend 的 module 或 class。   这个方法的作用是，为 base 类加入一个实例变量 @_dependencies。默认值是空数组。它用来保存这个模块依赖的其他模块的列表。
+它是一个回调方法，会在 **ActiveSupport::Concern** 被 extend 进其他 module 或 class 时触发。参数 base 就是被 extend 的 module 或 class。这个方法的作用是，为 base 类加入一个实例变量 @_dependencies。默认值是空数组。它用来保存这个模块依赖的其他模块的列表。
 
 #### **append_features**
 
@@ -153,19 +170,23 @@ module M3
   def self.append_features(base)  
     puts "call M3 append_features"  
     super  
-  end  
+  end
+  
   def m3_instance_method
     puts 'm3'
   end  
-end  
+end
+
 module M4  
   def self.append_features(base)  
     puts "call M4 append_features"  
-  end  
+  end
+  
   def m4_instance_method
     puts 'm4'
   end  
-end  
+end
+
 class C  
   include M3, M4  
 end  
@@ -176,19 +197,19 @@ c = C.new
 c.m3_instance_method  # 这个方法成功的混入到C中  
 c.m4_instance_method  # 对象c没有这个方法
 ```
-**ActiveSupport::Concern**中的**append_feature**并不是在 Concern 模块被 include 进其他模块时调用的（这个模块只会被extend，而且这个 append_features 并不是类方法），而是对于 extend 了**ActiveSupport::Concern**的模块而言（如 module M1 ），当它被混入类C时，会触发**append_features**方法。
+**ActiveSupport::Concern** 中的 **append_feature** 并不是在 Concern 模块被 include 进其他模块时调用的（这个模块只会被extend，而且这个 append_features 并不是类方法），而是对于 extend 了**ActiveSupport::Concern** 的模块而言（如 module M1 ），当它被混入类C时，会触发 **append_features** 方法。
 这个方法的作用是，如果 base 类（或 module ）有 @_dependencies 列表时，将自己记入base 的 @_dependencies 中，然后直接 return（就是不混入 base ）。如果 base 类没有 @_dependencies 列表（这种情况可以肯定 base 就是最终要混入的 class），就循环自己的 @_dependencies 列表，依次把每个依赖的 module 混入 base。
 
 #### **included**
 
-很简单，如果有 block。就把 block 存进 @_included_block 变量。然后在**append_featuers**中传给 base.class_eval。没有block。就和普通的**included**回调方法一样。
+很简单，如果有 block。就把 block 存进 @_included_block 变量。然后在 **append_featuers** 中传给 base.class_eval。没有block。就和普通的 **included** 回调方法一样。
 
 ## 总结
 
-基本上，**ActiveSupport::Concern**的思路就是使用**append_features**回调，去修改 module 的被 include 时的默认行为，延迟 module 被实际 include 的时机。这个模块中使用了相当一部分元编程方法。
+基本上，**ActiveSupport::Concern** 的思路就是使用 **append_features** 回调，去修改 module 的被 include 时的默认行为，延迟 module 被实际 include 的时机。这个模块中使用了相当一部分元编程方法。
 
 有些细节因为比较直观所以没讲，
 
 * 用 instance_variable_defined? 判断 @_dependencies 变量定义了没有，
 * 用 instance_variable_get 和 instance_variable_set 来获取和设置实例变量
-* 第 18 行的 if base < self 。这个判断是说，当base是self的子类时，返回true，否则返回nil。我没有想到什么情况会有base是self的子类的，除非自定义一个类继承自module…… 
+* 第 18 行的 if base < self 。这个判断是说，当 base 是 self 的子类时，返回 true，否则返回 nil。我没有想到什么情况会有 base 是 self 的子类的，除非自定义一个类继承自 module…… 
