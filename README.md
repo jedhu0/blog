@@ -18,6 +18,7 @@
 * [分布式事务](./mds/1632390714_Distributed-Transaction.md)
 * [A simple understanding of China's economic development model](./mds/1631289600_China-Economic.md)
 * [限流算法](./mds/1637574284-Ratelimit.md)
+* [《赌博默示录》博弈分析](./mds/1644478320-Gambling.md)
 
 ## Read
 
