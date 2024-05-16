@@ -21,6 +21,7 @@
 * [《赌博默示录》博弈分析](./mds/1644478320-Gambling.md)
 * [Diagram of boltdb](./mds/1663922940-boltdb.md)
 * [译《Ruby 3.0 的垃圾回收机制》](./mds/1688356140-T-ruby3-gc.md)
+* [What is RAG](./mds/1715846987-RAG.md)
 
 ## Read
 
