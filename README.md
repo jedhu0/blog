@@ -22,6 +22,8 @@
 * [Diagram of boltdb](./mds/1663922940-boltdb.md)
 * [译《Ruby 3.0 的垃圾回收机制》](./mds/1688356140-T-ruby3-gc.md)
 * [What is RAG](./mds/1715846987-RAG.md)
+* [Design of a Blockchain Data Processing Framework](./mds/1722916800_Blockchain-Data-Processing-Framework.md)
+* [State Explosion In Blockchain Account Model](./mds/1730889030_State-Explosion-In-Account-Model.md)
 
 ## Read
 
