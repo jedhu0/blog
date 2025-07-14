@@ -27,6 +27,7 @@
 
 ### Deep Research
 * [AI 记忆系统框架对比分析](./deep_research/AiMemoryFrameworkResearch.md)
+* [链上价格发现的演进：深入解析联合曲线与Meteora的动态发行协议](./deep_research/BondIngCurveResearch.md)
 
 ## Read
 
