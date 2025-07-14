@@ -25,6 +25,9 @@
 * [Design of a Blockchain Data Processing Framework](./mds/1722916800_Blockchain-Data-Processing-Framework.md)
 * [State Explosion In Blockchain Account Model](./mds/1730889030_State-Explosion-In-Account-Model.md)
 
+### Deep Research
+* [AI 记忆系统框架对比分析](./deep_research/AiMemoryFrameworkResearch.md)
+
 ## Read
 
 * [Github Pages](https://jedhu0.github.io/blog/)
